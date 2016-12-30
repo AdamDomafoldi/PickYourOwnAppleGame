@@ -2,18 +2,18 @@ var Game = function(game) {};
 
 var player, cursors, buttonFullscreen, sky, trap, heart;
 // score, your place, score text 
-var score = 0, yourPlace = 0, scoreText;
+var score = 0, yourPlace = 0, scoreText, applePoint = 10;
 
 var formSent = false;
 
 //time and stuff
-var timer, cycle, effectDuration, timeStep = 0, gameClock = 0, timeLimit = 52, timer1;
+var timer, cycle, effectDuration, purpleAppleEffectDuration, timeStep = 0, gameClock = 0, timeLimit = 52, timer1;
 
 // ledge
 var ledgeWidth, ledgeHeight; 
 
 // apples
-var appleWidth, appleHeight, yellowAppleON = false, yellowAppleStatusBar;
+var appleWidth, appleHeight, yellowAppleON = false, yellowAppleStatusBar, purpleAppleON = false, purpleAppleStatusBar;
 
 // Buttons
 var pauseButton;
@@ -202,7 +202,10 @@ Game.prototype = {
 
     if(yellowAppleON){
         this.yellowAppleEffect();
-    }    
+    }
+    if(purpleAppleON){
+        this.purpleAppleEffect();
+    }
 
 },
 
@@ -227,33 +230,29 @@ firstPart: function(ledgeX = ledges.x, ledgeY = 400){
             var appleRand = game.rnd.frac(); 
 
             if((canvasHeight-ledgeHeight) * generatedY * appleRand - appleHeight > (canvasHeight * 0.1)){
-
                 if(randBoostApple == 10){
-
                     var yellowApple = apples.create(generatedX+ledgeWidth*i + appleWidth*j, (canvasHeight-ledgeHeight) * generatedY * game.rnd.frac() - appleHeight, "yellowApple"); 
                     yellowApple.color = "yellow"; 
                     yellowApple.scale.setTo(objectScale, objectScale); 
-
                 }
                 else if(randBoostApple == 7){
-
                     var timeApple = apples.create(generatedX+ledgeWidth*i + appleWidth*j, (canvasHeight-ledgeHeight) * generatedY * game.rnd.frac() - appleHeight, "timeApple"); 
                     timeApple.color = "black"; 
                     timeApple.scale.setTo(objectScale, objectScale); 
-
+                }
+                else if(randBoostApple == 15){
+                    var timeApple = apples.create(generatedX+ledgeWidth*i + appleWidth*j, (canvasHeight-ledgeHeight) * generatedY * game.rnd.frac() - appleHeight, "purpleApple"); 
+                    timeApple.color = "purple"; 
+                    timeApple.scale.setTo(objectScale, objectScale);
                 }
                 else{
-
                      var apple = apples.create(generatedX+ledgeWidth*i + appleWidth*j, (canvasHeight-ledgeHeight) * generatedY * game.rnd.frac() - appleHeight, "redApple");
                      apple.scale.setTo(objectScale, objectScale); 
-
                 }                
             }
             else{
-
                 var apple = apples.create(generatedX+ledgeWidth*i + appleWidth*j, (canvasHeight-ledgeHeight) * generatedY + (canvasHeight - (canvasHeight-ledgeHeight * generatedY)) * game.rnd.frac() + appleHeight, "redApple");
-                apple.scale.setTo(objectScale, objectScale); 
-                  
+                apple.scale.setTo(objectScale, objectScale);                   
             }
                      
         }  
@@ -284,6 +283,7 @@ collectapple: function(player, apple) {
 
          // this is neccesary to the yellow apple effect
          effectDuration + 10;
+         purpleAppleEffectDuration + 10;
          // this to the apple end ledge generation
          timeStep -= 8;
          game.time.events.stop();
@@ -291,11 +291,27 @@ collectapple: function(player, apple) {
          game.time.events.start();        
         
     }
+    else if(apple.color == "purple"){
+
+         if(!purpleAppleON){
+
+            purpleAppleStatusBar = game.add.sprite(800, canvasHeight*0.01, "purpleApple"); 
+            purpleAppleStatusBar.enableBody = true; 
+
+        }    
+
+        purpleAppleON = true; 
+        applePoint = 20;
+
+        console.log("purple apple effect on");
+
+        purpleAppleEffectDuration = gameClock.text;  
+    }
     // Removes the apple from the screen
     apple.destroy();
 
     //  Add and update the score
-    score += 10;
+    score += applePoint;
     scoreText.text = "PONT: " + score;
 },
 
@@ -337,6 +353,20 @@ yellowAppleEffect: function(){
   
 },
 
+purpleAppleEffect: function(){
+
+    if(gameClock.text < (purpleAppleEffectDuration - 10)){
+
+        purpleAppleON = false;
+        applePoint = 10; 
+        purpleAppleStatusBar.destroy(); 
+
+        console.log("purple apple effect off");   
+               
+    }  
+  
+},
+
 managePause: function(gameapplet = false) {   
 
     this.game.paused = true;  
@@ -365,7 +395,7 @@ shutdown: function () {
             game.time.events.stop();
 
             formSent = true;  
-            yellowAppleON = false;  
+            yellowAppleON = false, purpleAppleON = false;  
             music.stop();           
             game.state.start("GameOver");
                                   

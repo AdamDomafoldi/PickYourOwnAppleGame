@@ -35,6 +35,7 @@ var  game = new Phaser.Game(canvasWidth, canvasHeight, Phaser.AUTO, 'game'),
             game.load.image('star', '../img/assets/star.png');
             game.load.image('redApple', '../img/assets/red_apple.png');
             game.load.image('yellowApple', '../img/assets/yellow_apple.png');
+            game.load.image('purpleApple', '../img/assets/purple_apple.png');
             game.load.image('timeApple', '../img/assets/time_apple.png');
             game.load.image('diamond', '../img/assets/diamond.png');
             game.load.image('heart', '../img/assets/heart.png');
