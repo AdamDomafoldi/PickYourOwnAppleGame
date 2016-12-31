@@ -7,7 +7,7 @@ var score = 0, yourPlace = 0, scoreText, applePoint = 10;
 var formSent = false;
 
 //time and stuff
-var timer, cycle, effectDuration, purpleAppleEffectDuration, timeStep = 0, gameClock = 0, timeLimit = 52, timer1;
+var timer, cycle, effectDuration = 0, purpleAppleEffectDuration = 0, timeStep = 0, gameClock = 0, timeLimit = 52, timer1;
 
 // ledge
 var ledgeWidth, ledgeHeight; 
@@ -121,30 +121,30 @@ Game.prototype = {
         // Add player life hearts group
         hearts = game.add.group();
 
-        for(var i = 0; i < 3; i++){
+        for(var i = 3; i > 0; i--){
 
-            heart = hearts.create(canvasWidth * 0.05 + i*40, canvasHeight * 0.01, "heart");
+            heart = hearts.create(gameClock.x + canvasWidth * 0.04 + i * 40, canvasHeight * 0.01, "heart");
             heart.scale.setTo(objectScale, objectScale);
 
-        }
+        }     
+   
+        // Add pause button
+        buttonPause = game.add.sprite(canvasWidth * 0.95, canvasHeight * 0.01, "buttonPause");
+        buttonPause.scale.setTo(objectScale * 0.6, objectScale * 0.6);
+        buttonPause.inputEnabled = true;  
+        buttonPause.events.onInputDown.add(this.managePause, this);      
 
         // Add fullscreen button
-        buttonExit = game.add.sprite(canvasWidth * 0.895, canvasHeight * 0.01, "buttonExit");
+        buttonExit = game.add.sprite(buttonPause.x - buttonPause.width, buttonPause.y, "buttonExit");
         buttonExit.scale.setTo(objectScale * 0.6, objectScale * 0.6);
         buttonExit.inputEnabled = true;
         buttonExit.events.onInputDown.add(function(){game.state.start("GameOver");}, this);  
 
         // Add fullscreen button
-        buttonFullscreen = game.add.sprite(canvasWidth * 0.93, canvasHeight * 0.01, "buttonFullscreen");
+        buttonFullscreen = game.add.sprite(buttonExit.x - buttonExit.width, buttonExit.y, "buttonFullscreen");
         buttonFullscreen.scale.setTo(objectScale * 0.6, objectScale * 0.6);
         buttonFullscreen.inputEnabled = true;
-        buttonFullscreen.events.onInputDown.add(this.gofull, this); 
-   
-        // Add pause button
-        buttonPause = game.add.sprite(canvasWidth * 0.965, canvasHeight * 0.01, "buttonPause");
-        buttonPause.scale.setTo(objectScale * 0.6, objectScale * 0.6);
-        buttonPause.inputEnabled = true;  
-        buttonPause.events.onInputDown.add(this.managePause, this);                       
+        buttonFullscreen.events.onInputDown.add(this.gofull, this);                  
               
     },
 
@@ -264,40 +264,30 @@ firstPart: function(ledgeX = ledges.x, ledgeY = 400){
 collectapple: function(player, apple) {   
 
     if(apple.color == "yellow"){  
-
         if(!yellowAppleON){
-
-            yellowAppleStatusBar = game.add.sprite(800, canvasHeight*0.01, "yellowApple"); 
+            yellowAppleStatusBar = game.add.sprite(canvasWidth * 0.8, canvasHeight * 0.01, "yellowApple"); 
             yellowAppleStatusBar.enableBody = true; 
-
         }       
 
         yellowAppleON = true; 
-
-        effectDuration = gameClock.text;  
-
+        effectDuration = parseInt(gameClock.text);  
     }
-    else if(apple.color == "black"){         
-
+    else if(apple.color == "black"){      
          currentTimer = parseInt(gameClock.text) + 10; 
-
          // this is neccesary to the yellow apple effect
-         effectDuration + 10;
-         purpleAppleEffectDuration + 10;
+         effectDuration += 10;
+         purpleAppleEffectDuration += 10;
          // this to the apple end ledge generation
          timeStep -= 8;
          game.time.events.stop();
          game.time.events.add(Phaser.Timer.SECOND * currentTimer, this.shutdown, this);
-         game.time.events.start();        
-        
+         game.time.events.start();            
     }
     else if(apple.color == "purple"){
 
          if(!purpleAppleON){
-
-            purpleAppleStatusBar = game.add.sprite(800, canvasHeight*0.01, "purpleApple"); 
+            purpleAppleStatusBar = game.add.sprite(canvasWidth * 0.8 - appleWidth, canvasHeight * 0.01, "purpleApple"); 
             purpleAppleStatusBar.enableBody = true; 
-
         }    
 
         purpleAppleON = true; 
@@ -305,7 +295,7 @@ collectapple: function(player, apple) {
 
         console.log("purple apple effect on");
 
-        purpleAppleEffectDuration = gameClock.text;  
+        purpleAppleEffectDuration = parseInt(gameClock.text);  
     }
     // Removes the apple from the screen
     apple.destroy();
@@ -340,7 +330,7 @@ collideLedge: function(){
 
 yellowAppleEffect: function(){
 
-    if(gameClock.text < (effectDuration - 10)){
+    if(parseInt(gameClock.text) < (effectDuration - 10)){
 
         yellowAppleON = false;  
         yellowAppleStatusBar.destroy();    
@@ -355,7 +345,7 @@ yellowAppleEffect: function(){
 
 purpleAppleEffect: function(){
 
-    if(gameClock.text < (purpleAppleEffectDuration - 10)){
+    if(parseInt(gameClock.text) < (purpleAppleEffectDuration - 10)){
 
         purpleAppleON = false;
         applePoint = 10; 
