@@ -7,7 +7,7 @@ var score = 0, yourPlace = 0, scoreText, applePoint = 10;
 var formSent = false;
 
 //time and stuff
-var timer, cycle, effectDuration = 0, purpleAppleEffectDuration = 0, timeStep = 0, gameClock = 0, timeLimit = 52, timer1;
+var timer, cycle, effectDuration = 0, purpleAppleEffectDuration = 0, timeStep = 0, gameClock = 0, timeLimit = 52, timer1, gameDuration, pauseDuration;
 
 // ledge
 var ledgeWidth, ledgeHeight; 
@@ -42,11 +42,15 @@ Game.prototype = {
         //this.clearGameCache();
 
         timer = 0;
-        cycle = 1000;
+        cycle = 2000;
 
         timeStep = 0;
 
-        formSent = false;        
+        formSent = false;  
+
+        gameDuration = new Date().getTime();     
+
+        pauseDuration = 0; 
 
         // game.world.resize(1280, 720);          
 
@@ -206,7 +210,6 @@ Game.prototype = {
     if(purpleAppleON){
         this.purpleAppleEffect();
     }
-
 },
 
 firstPart: function(ledgeX = ledges.x, ledgeY = 400){     
@@ -279,6 +282,7 @@ collectapple: function(player, apple) {
          purpleAppleEffectDuration += 10;
          // this to the apple end ledge generation
          timeStep -= 8;
+         gameDuration += 10;
          game.time.events.stop();
          game.time.events.add(Phaser.Timer.SECOND * currentTimer, this.shutdown, this);
          game.time.events.start();            
@@ -359,6 +363,8 @@ purpleAppleEffect: function(){
 
 managePause: function(gameapplet = false) {   
 
+    pauseStartTime = new Date().getTime();
+
     this.game.paused = true;  
 
     var optionStyle = { font: "30pt TheMinion", fill: "white", align: "left", stroke: "rgba(0,0,0,0)", srokeThickness: 4};
@@ -367,7 +373,8 @@ managePause: function(gameapplet = false) {
     
     this.input.onDown.add(function(){   
 
-        this.game.paused = false; 
+        this.game.paused = false;
+        pauseDuration += (new Date().getTime() - pauseStartTime); 
         txt.destroy();       
               
     }, this);
@@ -377,6 +384,7 @@ managePause: function(gameapplet = false) {
 shutdown: function () {      
 
     document.getElementById("scoreInput").value = score;
+    document.getElementById("durationInput").value = (new Date().getTime() - gameDuration - pauseDuration)/1000;
 
     if (!formSent){
         $("#scoreForm").ajaxSubmit({success: function( response ) {               
