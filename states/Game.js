@@ -248,6 +248,11 @@ firstPart: function(ledgeX = ledges.x, ledgeY = 400){
                     timeApple.color = "purple"; 
                     timeApple.scale.setTo(objectScale, objectScale);
                 }
+                else if(randBoostApple == 17){
+                    var timeApple = apples.create(generatedX+ledgeWidth*i + appleWidth*j, (canvasHeight-ledgeHeight) * generatedY * game.rnd.frac() - appleHeight, "silverApple"); 
+                    timeApple.color = "silver"; 
+                    timeApple.scale.setTo(objectScale, objectScale);
+                }
                 else{
                      var apple = apples.create(generatedX+ledgeWidth*i + appleWidth*j, (canvasHeight-ledgeHeight) * generatedY * game.rnd.frac() - appleHeight, "redApple");
                      apple.scale.setTo(objectScale, objectScale); 
@@ -300,6 +305,10 @@ collectapple: function(player, apple) {
         console.log("purple apple effect on");
 
         purpleAppleEffectDuration = parseInt(gameClock.text);  
+    }
+    else if(apple.color == "silver"){
+        score += 90; 
+        console.log("consumed a silver apple");        
     }
     // Removes the apple from the screen
     apple.destroy();
