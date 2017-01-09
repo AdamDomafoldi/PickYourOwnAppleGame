@@ -383,8 +383,15 @@ managePause: function(gameapplet = false) {
     this.input.onDown.add(function(){   
 
         this.game.paused = false;
-        pauseDuration += (new Date().getTime() - pauseStartTime); 
+
+        var calculatedDuration = new Date().getTime() - pauseStartTime;
+
+        console.log(calculatedDuration);
+
+        pauseDuration += calculatedDuration; 
         txt.destroy();       
+        // need this to remove the previously added listener
+        game.input.onDown.removeAll();
               
     }, this);
 
