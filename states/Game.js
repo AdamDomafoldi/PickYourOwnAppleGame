@@ -40,21 +40,12 @@ Game.prototype = {
         // Game timer
         game.time.events.start();
         game.time.events.add(Phaser.Timer.SECOND * 60, this.shutdown, this);
-
         score = 0, timer = 0, cycle = 2000, step = 8, timeStep = 0;
-
         formSent = false;  
-
-        gameDuration = new Date().getTime();   
-        generateStep = new Date().getTime();       
-
+        gameDuration = new Date().getTime();
         pauseDuration = 0; 
-
-        // game.world.resize(1280, 720);          
-
         //  We"re going to be using physics, so enable the Arcade Physics system
         game.physics.startSystem(Phaser.Physics.ARCADE);
-
         //  A simple background for our game
         sky = game.add.sprite(0, 0,"sky");    
         sky.scale.setTo(objectScale*2, objectScale*2);
@@ -121,30 +112,24 @@ Game.prototype = {
         hearts = game.add.group();
 
         for(var i = 3; i > 0; i--){
-
             heart = hearts.create(gameClock.x + canvasWidth * 0.04 + i * 40, canvasHeight * 0.01, "heart");
             heart.scale.setTo(objectScale, objectScale);
-
-        }     
-   
+        }    
         // Add pause button
         buttonPause = game.add.sprite(canvasWidth * 0.95, canvasHeight * 0.01, "buttonPause");
         buttonPause.scale.setTo(objectScale * 0.6, objectScale * 0.6);
         buttonPause.inputEnabled = true;  
         buttonPause.events.onInputDown.add(this.managePause, this);      
-
         // Add fullscreen button
         buttonExit = game.add.sprite(buttonPause.x - buttonPause.width, buttonPause.y, "buttonExit");
         buttonExit.scale.setTo(objectScale * 0.6, objectScale * 0.6);
         buttonExit.inputEnabled = true;
         buttonExit.events.onInputDown.add(function(){game.state.start("GameOver");}, this);  
-
         // Add fullscreen button
         buttonFullscreen = game.add.sprite(buttonExit.x - buttonExit.width, buttonExit.y, "buttonFullscreen");
         buttonFullscreen.scale.setTo(objectScale * 0.6, objectScale * 0.6);
         buttonFullscreen.inputEnabled = true;
-        buttonFullscreen.events.onInputDown.add(this.gofull, this);                  
-              
+        buttonFullscreen.events.onInputDown.add(this.gofull, this);                
     },
 
   //|||||||
@@ -273,7 +258,7 @@ collectapple: function(player, apple) {
         }            
         yellowAppleON = true;        
         startTimeBox.yellow = parseInt(gameClock.text);
-        step = 4; 
+        step = 6; 
         this.consoleLogWrapper("yellow apple effect on:" + yellowAppleEffectStart);
         this.consoleLogWrapper("speed: " + step);
     }
