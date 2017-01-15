@@ -40,7 +40,7 @@ Game.prototype = {
         // Game timer
         game.time.events.start();
         game.time.events.add(Phaser.Timer.SECOND * 60, this.shutdown, this);
-        score = 0, timer = 0, cycle = 2000, step = 8, timeStep = 0;
+        score = 0, timer = 0, cycle = 2000, step = 7, timeStep = 0;
         formSent = false;  
         gameDuration = new Date().getTime();
         pauseDuration = 0; 
@@ -157,15 +157,15 @@ Game.prototype = {
     }  
 
     ledges.x -= 2.5;  
-    apples.x -=2.5;      
+    apples.x -=2.5;  
+
+    gameClock.text = Math.round(game.time.events.duration/1000);     
 
     if(startTimeBox.generateStep - parseInt(gameClock.text) > step){
         startTimeBox.generateStep = parseInt(gameClock.text);
         this.firstPart();
         this.consoleLogWrapper("Generate elements: " + Math.round(game.time.events.duration/1000));       
-    }    
-
-    gameClock.text = Math.round(game.time.events.duration/1000);   
+    }         
   
     // garbage collector for apples and ledges
     ledges.forEach(function(ledge) {       
@@ -254,12 +254,12 @@ collectapple: function(player, apple) {
     if(apple.color == "yellow"){  
         if(!yellowAppleON){
             yellowAppleStatusBar = game.add.sprite(canvasWidth * 0.8, canvasHeight * 0.01, "yellowApple"); 
-            yellowAppleStatusBar.enableBody = true;           
+            yellowAppleStatusBar.enableBody = true;              
         }            
         yellowAppleON = true;        
-        startTimeBox.yellow = parseInt(gameClock.text);
-        step = 6; 
+        startTimeBox.yellow = parseInt(gameClock.text);       
         this.consoleLogWrapper("yellow apple effect on:" + yellowAppleEffectStart);
+        step = 5;
         this.consoleLogWrapper("speed: " + step);
     }
     else if(apple.color == "black"){      
@@ -320,8 +320,8 @@ yellowAppleEffect: function(){
     if(dateDiff > 10){     
         yellowAppleON = false;  
         yellowAppleStatusBar.destroy();  
-        this.consoleLogWrapper("yellow apple effect off:" + dateDiff);   
-        step = 8;      
+        this.consoleLogWrapper("yellow apple effect off:" + dateDiff);    
+        step = 7;          
         this.consoleLogWrapper("speed: " + step);         
     }   
     // increasing the velocity of coming elements
@@ -330,7 +330,7 @@ yellowAppleEffect: function(){
 },
 
 purpleAppleEffect: function(){
-    var dateDiff = startTimeBox.yellow - parseInt(gameClock.text);
+    var dateDiff = startTimeBox.purple - parseInt(gameClock.text);
     if(dateDiff > 10){
         purpleAppleON = false;
         applePoint = 10; 
