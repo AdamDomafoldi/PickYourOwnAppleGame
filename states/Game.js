@@ -17,10 +17,10 @@ var appleWidth, appleHeight, yellowAppleON = false, yellowAppleStatusBar, purple
 
 // Buttons
 var pauseButton;
+// obejcts
+var startTimeBox, pickedAppleBox;
 
-var startTimeBox;
-
-debugMode = true;
+debugMode = false;
 
 Game.prototype = {
 
@@ -30,6 +30,7 @@ Game.prototype = {
 
     create: function () {   
         startTimeBox = {purple:0, yellow:0, generateStep: 70};
+        pickedAppleBox = {purple:0, yellow:0, silver: 0, apple: 0, black: 0};
 
         if (music.name !== "dangerous" && music.volume) {
             music.stop();
@@ -261,6 +262,7 @@ collectapple: function(player, apple) {
         this.consoleLogWrapper("yellow apple effect on:" + yellowAppleEffectStart);
         step = 5;
         this.consoleLogWrapper("speed: " + step);
+        pickedAppleBox.yellow++;
     }
     else if(apple.color == "black"){      
          currentTimer = parseInt(gameClock.text) + 10;        
@@ -268,7 +270,8 @@ collectapple: function(player, apple) {
          this.manageStartTime(10);
          game.time.events.stop();
          game.time.events.add(Phaser.Timer.SECOND * currentTimer, this.shutdown, this);
-         game.time.events.start();            
+         game.time.events.start();    
+         pickedAppleBox.black++;        
     }
     else if(apple.color == "purple"){
         if(!purpleAppleON){
@@ -279,10 +282,12 @@ collectapple: function(player, apple) {
         applePoint = 20;
         this.consoleLogWrapper("purple apple effect on"); 
         startTimeBox.purple = parseInt(gameClock.text);
+        pickedAppleBox.purple++;
     }
     else if(apple.color == "silver"){
         score += 90; 
-        this.consoleLogWrapper("consumed a silver apple");        
+        this.consoleLogWrapper("consumed a silver apple");    
+        pickedAppleBox.silver++;    
     }
     // Removes the apple from the screen
     apple.destroy();
@@ -290,6 +295,7 @@ collectapple: function(player, apple) {
     //  Add and update the score
     score += applePoint;
     scoreText.text = "PONT: " + score;
+    pickedAppleBox.apple++;
 },
 
 collideLedge: function(){      
@@ -381,6 +387,11 @@ shutdown: function () {
 
     document.getElementById("scoreInput").value = score;
     document.getElementById("durationInput").value = (new Date().getTime() - gameDuration - pauseDuration)/1000;
+    document.getElementById("appleInput").value = pickedAppleBox.apple;
+    document.getElementById("yellowInput").value = pickedAppleBox.yellow;
+    document.getElementById("blackInput").value = pickedAppleBox.black;
+    document.getElementById("purpleInput").value = pickedAppleBox.purple;
+    document.getElementById("silverInput").value = pickedAppleBox.silver;
 
     if (!formSent){
         $("#scoreForm").ajaxSubmit({success: function( response ) {               
