@@ -18,9 +18,9 @@ var appleWidth, appleHeight, yellowAppleON = false, yellowAppleStatusBar, purple
 // Buttons
 var pauseButton;
 // obejcts
-var startTimeBox, pickedAppleBox;
+var startTimeBox, pickedAppleBox, heartStack;
 
-debugMode = false;
+debugMode = true;
 
 Game.prototype = {
 
@@ -31,6 +31,7 @@ Game.prototype = {
     create: function () {   
         startTimeBox = {purple:0, yellow:0, generateStep: 70};
         pickedAppleBox = {purple:0, yellow:0, silver: 0, apple: 0, black: 0};
+        heartStack = [];
 
         if (music.name !== "dangerous" && music.volume) {
             music.stop();
@@ -112,9 +113,10 @@ Game.prototype = {
         // Add player life hearts group
         hearts = game.add.group();
 
-        for(var i = 3; i > 0; i--){
+        for(var i = 1; i <= 3; i++){
             heart = hearts.create(gameClock.x + canvasWidth * 0.04 + i * 40, canvasHeight * 0.01, "heart");
-            heart.scale.setTo(objectScale, objectScale);
+            heart.id = i-1;          
+            heart.scale.setTo(objectScale, objectScale);            
         }    
         // Add pause button
         buttonPause = game.add.sprite(canvasWidth * 0.95, canvasHeight * 0.01, "buttonPause");
@@ -139,7 +141,7 @@ Game.prototype = {
 
   update: function() {    
     
-    game.physics.arcade.collide(player, ledges);
+    game.physics.arcade.collide(player, ledges);   
 
     // if player is on ledge or floor then walk instead of fly
     if(player.body.touching.down || player.body.onFloor()){
@@ -169,20 +171,16 @@ Game.prototype = {
     }         
   
     // garbage collector for apples and ledges
-    ledges.forEach(function(ledge) {       
-       
+    ledges.forEach(function(ledge) {         
         if (ledge.x-Math.abs(ledges.x) < -800) {          
             ledge.destroy();
-        }       
-        
+        }               
     });
 
-    apples.forEach(function(apple) {
-       
+    apples.forEach(function(apple) {       
         if (apple.x-Math.abs(apples.x) < -100) {        
-            apple.destroy();           
-        }
-        
+            apple.destroy();      
+        }        
     });
 
     if(yellowAppleON){
@@ -198,41 +196,39 @@ firstPart: function(ledgeX = ledges.x, ledgeY = 400){
     var generatedX = Math.abs(ledgeX) + canvasWidth;   
      
     for(i=0; i < 3; i++){
-
-        var generatedY = game.rnd.frac();
-       
+        var generatedY = game.rnd.frac();       
         var ledge = ledges.create(generatedX+ledgeWidth*i, (canvasHeight-ledgeHeight) * generatedY, "ground");
         ledge.body.immovable = true;
         ledge.scale.setTo(objectScale, objectScale);  
-
-        var appleNumber = game.rnd.integerInRange(1, 5);                             
-
+        var appleNumber = game.rnd.integerInRange(1, 5);  
         for(var j = 0; j < appleNumber; j++){
-
             var randBoostApple = game.rnd.integerInRange(1, 20);   
-
             var appleRand = game.rnd.frac(); 
-
             if((canvasHeight-ledgeHeight) * generatedY * appleRand - appleHeight > (canvasHeight * 0.1)){
-                if(randBoostApple == 10){
+                if(randBoostApple == 4){
                     var yellowApple = apples.create(generatedX+ledgeWidth*i + appleWidth*j, (canvasHeight-ledgeHeight) * generatedY * game.rnd.frac() - appleHeight, "yellowApple"); 
                     yellowApple.color = "yellow"; 
                     yellowApple.scale.setTo(objectScale, objectScale); 
                 }
-                else if(randBoostApple == 7){
+                else if(randBoostApple == 8){
                     var timeApple = apples.create(generatedX+ledgeWidth*i + appleWidth*j, (canvasHeight-ledgeHeight) * generatedY * game.rnd.frac() - appleHeight, "timeApple"); 
                     timeApple.color = "black"; 
                     timeApple.scale.setTo(objectScale, objectScale); 
                 }
-                else if(randBoostApple == 15){
-                    var timeApple = apples.create(generatedX+ledgeWidth*i + appleWidth*j, (canvasHeight-ledgeHeight) * generatedY * game.rnd.frac() - appleHeight, "purpleApple"); 
-                    timeApple.color = "purple"; 
-                    timeApple.scale.setTo(objectScale, objectScale);
+                else if(randBoostApple == 12){
+                    var purpleApple = apples.create(generatedX+ledgeWidth*i + appleWidth*j, (canvasHeight-ledgeHeight) * generatedY * game.rnd.frac() - appleHeight, "purpleApple"); 
+                    purpleApple.color = "purple"; 
+                    purpleApple.scale.setTo(objectScale, objectScale);
                 }
-                else if(randBoostApple == 17){
-                    var timeApple = apples.create(generatedX+ledgeWidth*i + appleWidth*j, (canvasHeight-ledgeHeight) * generatedY * game.rnd.frac() - appleHeight, "silverApple"); 
-                    timeApple.color = "silver"; 
-                    timeApple.scale.setTo(objectScale, objectScale);
+                else if(randBoostApple == 16){
+                    var silverApple = apples.create(generatedX+ledgeWidth*i + appleWidth*j, (canvasHeight-ledgeHeight) * generatedY * game.rnd.frac() - appleHeight, "silverApple"); 
+                    silverApple.color = "silver"; 
+                    silverApple.scale.setTo(objectScale, objectScale);
+                }
+                else if(randBoostApple == 6){
+                    var whiteApple = apples.create(generatedX+ledgeWidth*i + appleWidth*j, (canvasHeight-ledgeHeight) * generatedY * game.rnd.frac() - appleHeight, "whiteApple"); 
+                    whiteApple.color = "white"; 
+                    whiteApple.scale.setTo(objectScale, objectScale);
                 }
                 else{
                      var apple = apples.create(generatedX+ledgeWidth*i + appleWidth*j, (canvasHeight-ledgeHeight) * generatedY * game.rnd.frac() - appleHeight, "redApple");
@@ -242,12 +238,9 @@ firstPart: function(ledgeX = ledges.x, ledgeY = 400){
             else{
                 var apple = apples.create(generatedX+ledgeWidth*i + appleWidth*j, (canvasHeight-ledgeHeight) * generatedY + (canvasHeight - (canvasHeight-ledgeHeight * generatedY)) * game.rnd.frac() + appleHeight, "redApple");
                 apple.scale.setTo(objectScale, objectScale);                   
-            }
-                     
-        }  
-
-    }   
-
+            }                     
+        }
+    }  
 }, 
 
 collectapple: function(player, apple) {   
@@ -289,36 +282,46 @@ collectapple: function(player, apple) {
         this.consoleLogWrapper("consumed a silver apple");    
         pickedAppleBox.silver++;    
     }
+    else if(apple.color == "white"){      
+        this.consoleLogWrapper("consumed a white apple");   
+        hearts.forEach(function(heart) {       
+            if (!heart.alive) {        
+                 heart.reset(heartStack[heart.id].x, heartStack[heart.id].y);             
+            }        
+        });              
+    }
     // Removes the apple from the screen
     apple.destroy();
-
     //  Add and update the score
     score += applePoint;
     scoreText.text = "PONT: " + score;
     pickedAppleBox.apple++;
 },
 
-collideLedge: function(){      
+heartStack: function(x,y){
+    var element = {};
+     element.x = x;
+     element.y = y;
+     heartStack.push(element);
+},
 
-    if (game.time.now > timer && !yellowAppleON && !player.body.touching.down) {
-       
+collideLedge: function(){  
+    if (game.time.now > timer && !yellowAppleON && !player.body.touching.down) {       
         // Update timer.
-        timer = game.time.now + cycle;
-            
+        timer = game.time.now + cycle;            
         // Get the first alive item and kill it.
         var item = hearts.getFirstAlive(); 
-
         if(item){
+            this.heartStack(item.x, item.y);
+             this.consoleLogWrapper(item.id);
             item.kill();
             item = hearts.getFirstAlive();  
+            
         }
-
         if(!item){
             this.shutdown();     
         }
-
     }  
-
 },
 
 yellowAppleEffect: function(){
@@ -383,15 +386,16 @@ manageStartTime: function(duration){
     this.consoleLogWrapper("pause time added to startTimeBox: " + duration);
 },
 
-shutdown: function () {      
-
+shutdown: function () {
+    this.consoleLogWrapper(pickedAppleBox.yellow + " " + pickedAppleBox.black + " " + pickedAppleBox.purple + " " + pickedAppleBox.silver + " " + pickedAppleBox.apple);
     document.getElementById("scoreInput").value = score;
-    document.getElementById("durationInput").value = (new Date().getTime() - gameDuration - pauseDuration)/1000;
+    document.getElementById("durationInput").value = (new Date().getTime() - gameDuration - pauseDuration)/1000;    
     document.getElementById("appleInput").value = pickedAppleBox.apple;
     document.getElementById("yellowInput").value = pickedAppleBox.yellow;
     document.getElementById("blackInput").value = pickedAppleBox.black;
     document.getElementById("purpleInput").value = pickedAppleBox.purple;
     document.getElementById("silverInput").value = pickedAppleBox.silver;
+     this.consoleLogWrapper(document.getElementById("yellowInput").value + " " + document.getElementById("appleInput").value + " " + document.getElementById("purpleInput").value + " " + document.getElementById("silverInput").value + " " + document.getElementById("blackInput").value);
 
     if (!formSent){
         $("#scoreForm").ajaxSubmit({success: function( response ) {               
