@@ -4,7 +4,7 @@ var player, cursors, buttonFullscreen, nightBackground, trap, heart;
 // score, your place, score text 
 var score = 0,
     yourPlace = 0,
-    scoreText, applePoint = 10;
+    scoreText, applePoint;
 
 var formSent = false;
 
@@ -55,6 +55,7 @@ Game.prototype = {
         formSent = false;
         gameDuration = new Date().getTime();
         pauseDuration = 0;
+        applePoint = 10;
         //  We"re going to be using physics, so enable the Arcade Physics system
         game.physics.startSystem(Phaser.Physics.ARCADE);
         //  A simple background for our game
