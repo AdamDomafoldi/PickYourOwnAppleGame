@@ -1,6 +1,6 @@
 var Game = function(game) {};
 
-var player, cursors, buttonFullscreen, sky, trap, heart;
+var player, cursors, buttonFullscreen, nightBackground, trap, heart;
 // score, your place, score text 
 var score = 0,
     yourPlace = 0,
@@ -58,8 +58,8 @@ Game.prototype = {
         //  We"re going to be using physics, so enable the Arcade Physics system
         game.physics.startSystem(Phaser.Physics.ARCADE);
         //  A simple background for our game
-        sky = game.add.sprite(0, 0, "sky");
-        sky.scale.setTo(objectScale * 2, objectScale * 2);
+        nightBackground = game.add.sprite(0, 0, "nightBackground");
+        // sky.scale.setTo(objectScale * 2, objectScale * 2);
 
         // Enables all kind of input actions on this image (click, etc)
         game.inputEnabled = true;
