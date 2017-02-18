@@ -13,7 +13,7 @@ var timer, cycle, timeStep = 0,
     gameClock = 0,
     timeLimit = 52,
     step, countGeneration = 0,
-    timer1, gameDuration, pauseDuration;
+    timer1, gameDuration, pauseDuration, round;
 
 // ledge
 var ledgeWidth, ledgeHeight;
@@ -29,7 +29,7 @@ var pauseButton;
 // obejcts
 var startTimeBox, pickedAppleBox, heartStack;
 
-debugMode = false;
+debugMode = true;
 
 Game.prototype = {
 
@@ -56,12 +56,12 @@ Game.prototype = {
         gameDuration = new Date().getTime();
         pauseDuration = 0;
         applePoint = 10;
+        round = 0;
         //  We"re going to be using physics, so enable the Arcade Physics system
         game.physics.startSystem(Phaser.Physics.ARCADE);
         //  A simple background for our game
         nightBackground = game.add.sprite(0, 0, "nightBackground");
-        // sky.scale.setTo(objectScale * 2, objectScale * 2);
-
+        nightBackground.scale.setTo(objectScale, objectScale);
         // Enables all kind of input actions on this image (click, etc)
         game.inputEnabled = true;
 
@@ -173,9 +173,12 @@ Game.prototype = {
 
         if (startTimeBox.generateStep - parseInt(gameClock.text) > step) {
             startTimeBox.generateStep = parseInt(gameClock.text);
-            this.firstPart();
-            this.consoleLogWrapper("Generate elements: " + Math.round(game.time.events.duration / 1000));
+            //  PathGenerator.firstPart();
+            //  this.consoleLogWrapper("Generate elements: " + Math.round(game.time.events.duration / 1000));
         }
+
+
+        PathGenerator.generateElements();
 
         // garbage collector for apples and ledges
         ledges.forEach(function(ledge) {
@@ -195,52 +198,6 @@ Game.prototype = {
         }
         if (purpleAppleON) {
             this.purpleAppleEffect();
-        }
-    },
-
-    firstPart: function(ledgeX = ledges.x, ledgeY = 400) {
-
-        var generatedX = Math.abs(ledgeX) + canvasWidth;
-
-        for (i = 0; i < 3; i++) {
-            var generatedY = game.rnd.frac();
-            var ledge = ledges.create(generatedX + ledgeWidth * i, (canvasHeight - ledgeHeight) * generatedY, "ground");
-            ledge.body.immovable = true;
-            ledge.scale.setTo(objectScale, objectScale);
-            var appleNumber = game.rnd.integerInRange(1, 5);
-            for (var j = 0; j < appleNumber; j++) {
-                var randBoostApple = game.rnd.integerInRange(1, 20);
-                var appleRand = game.rnd.frac();
-                if ((canvasHeight - ledgeHeight) * generatedY * appleRand - appleHeight > (canvasHeight * 0.1)) {
-                    if (randBoostApple == 4) {
-                        var yellowApple = apples.create(generatedX + ledgeWidth * i + appleWidth * j, (canvasHeight - ledgeHeight) * generatedY * game.rnd.frac() - appleHeight, "yellowApple");
-                        yellowApple.color = "yellow";
-                        yellowApple.scale.setTo(objectScale, objectScale);
-                    } else if (randBoostApple == 8) {
-                        var timeApple = apples.create(generatedX + ledgeWidth * i + appleWidth * j, (canvasHeight - ledgeHeight) * generatedY * game.rnd.frac() - appleHeight, "timeApple");
-                        timeApple.color = "black";
-                        timeApple.scale.setTo(objectScale, objectScale);
-                    } else if (randBoostApple == 12) {
-                        var purpleApple = apples.create(generatedX + ledgeWidth * i + appleWidth * j, (canvasHeight - ledgeHeight) * generatedY * game.rnd.frac() - appleHeight, "purpleApple");
-                        purpleApple.color = "purple";
-                        purpleApple.scale.setTo(objectScale, objectScale);
-                    } else if (randBoostApple == 16) {
-                        var silverApple = apples.create(generatedX + ledgeWidth * i + appleWidth * j, (canvasHeight - ledgeHeight) * generatedY * game.rnd.frac() - appleHeight, "silverApple");
-                        silverApple.color = "silver";
-                        silverApple.scale.setTo(objectScale, objectScale);
-                    } else if (randBoostApple == 6) {
-                        var whiteApple = apples.create(generatedX + ledgeWidth * i + appleWidth * j, (canvasHeight - ledgeHeight) * generatedY * game.rnd.frac() - appleHeight, "whiteApple");
-                        whiteApple.color = "white";
-                        whiteApple.scale.setTo(objectScale, objectScale);
-                    } else {
-                        var apple = apples.create(generatedX + ledgeWidth * i + appleWidth * j, (canvasHeight - ledgeHeight) * generatedY * game.rnd.frac() - appleHeight, "redApple");
-                        apple.scale.setTo(objectScale, objectScale);
-                    }
-                } else {
-                    var apple = apples.create(generatedX + ledgeWidth * i + appleWidth * j, (canvasHeight - ledgeHeight) * generatedY + (canvasHeight - (canvasHeight - ledgeHeight * generatedY)) * game.rnd.frac() + appleHeight, "redApple");
-                    apple.scale.setTo(objectScale, objectScale);
-                }
-            }
         }
     },
 
