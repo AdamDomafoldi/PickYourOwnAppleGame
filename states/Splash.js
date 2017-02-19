@@ -22,9 +22,9 @@ Splash.prototype = {
     },
     // various freebies found from google image search
     loadImages: function() {
-        game.load.image('menu-bg', '../img/assets/menu-bg.jpg');
-        game.load.image('options-bg', '../img/assets/options-bg.jpg');
-        game.load.image('gameover-bg', '../img/assets/gameover-bg.jpg');
+        /* game.load.image('menu-bg', '../img/assets/menu-bg.jpg');
+         game.load.image('options-bg', '../img/assets/options-bg.jpg');
+         game.load.image('gameover-bg', '../img/assets/gameover-bg.jpg');*/
     },
 
     loadFonts: function() {

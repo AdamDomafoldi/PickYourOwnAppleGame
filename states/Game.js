@@ -29,7 +29,7 @@ var pauseButton;
 // obejcts
 var startTimeBox, pickedAppleBox, heartStack;
 
-debugMode = true;
+debugMode = false;
 
 Game.prototype = {
 
@@ -60,8 +60,8 @@ Game.prototype = {
         //  We"re going to be using physics, so enable the Arcade Physics system
         game.physics.startSystem(Phaser.Physics.ARCADE);
         //  A simple background for our game
-        nightBackground = game.add.sprite(0, 0, "nightBackground");
-        nightBackground.scale.setTo(objectScale, objectScale);
+        background = game.add.sprite(0, 0, "background");
+        background.scale.setTo(objectScale, objectScale);
         // Enables all kind of input actions on this image (click, etc)
         game.inputEnabled = true;
 
